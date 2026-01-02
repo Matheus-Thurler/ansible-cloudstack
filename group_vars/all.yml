@@ -1,0 +1,19 @@
+---
+# Network Configuration
+management_server_ip: "{{ groups['cloudstack_management'][0] }}"
+utility_server_ip: "{{ groups['cloudstack_management'][0] }}"
+gateway: "10.0.0.1"
+dns1: "8.8.8.8"
+dns2: "8.8.4.4"
+
+# CloudStack paths
+secondary_storage_path: "/export/secondary"
+primary_storage_path: "/export/primary"
+
+# NFS Server Toggle
+enable_nfs_server: true
+nfs_exports_file: "/etc/exports"
+
+# Passwords
+mysql_root_password: "password"
+mysql_cloud_password: "password"

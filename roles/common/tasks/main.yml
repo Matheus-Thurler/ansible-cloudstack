@@ -1,0 +1,25 @@
+---
+- name: Load OS specific tasks (RHEL)
+  include_tasks: Rhel.yml
+  when: ansible_os_family == 'RedHat'
+
+- name: Load OS specific tasks (Debian)
+  include_tasks: Debian.yml
+  when: ansible_os_family == 'Debian'
+
+- name: Configure Hostname
+  hostname:
+    name: "cloudstack-mgmt"
+
+- name: Add host to /etc/hosts
+  lineinfile:
+    path: /etc/hosts
+    line: "127.0.0.1   cloudstack-mgmt"
+    state: present
+
+- name: Ensure Chrony is running and enabled
+  service:
+    name: chronyd
+    state: started
+    enabled: yes
+  when: ansible_os_family == "RedHat" or ansible_os_family == "Debian"
