@@ -7,15 +7,7 @@
   include_tasks: Debian.yml
   when: ansible_os_family == 'Debian'
 
-- name: Configure Hostname
-  hostname:
-    name: "cloudstack-mgmt"
 
-- name: Add host to /etc/hosts
-  lineinfile:
-    path: /etc/hosts
-    line: "127.0.0.1   cloudstack-mgmt"
-    state: present
 
 - name: Ensure Chrony is running and enabled
   service:

@@ -1,6 +1,6 @@
 # Apache CloudStack 4.22 - Ansible Automation
 
-Automated deployment of **Apache CloudStack 4.22** on **Rocky Linux 9 (RHEL family VALIDATED)** and **Debian 12 / Ubuntu 22.04+**.
+Automated deployment of **Apache CloudStack 4.22** on **Rocky Linux 9 (RHEL family)** and **Debian 12 / Ubuntu 22.04+**.
 
 This project executes a **Full Stack Installation** on a single server (All-in-One) or multiple nodes, managing:
 - **Database:** MySQL 8.0 (Tuned for CloudStack)
@@ -22,14 +22,6 @@ This project executes a **Full Stack Installation** on a single server (All-in-O
 ---
 
 ## 🚀 Installation Guide
-
-To ensure Ansible can connect via SSH without issues, copy your public SSH key to the target hosts (replace `<host ip>` and the user as needed):
-
-```bash
-ssh-copy-id -i ~/.ssh/id_rsa.pub root@<host ip>
-```
-
-If you have multiple hosts, run the command for each IP or use a small loop to automate the process.
 
 ### 1. Configure Inventory
 Edit the `inventory` file to define your target server. Replace `<host ip>` with your server's actual IP address:

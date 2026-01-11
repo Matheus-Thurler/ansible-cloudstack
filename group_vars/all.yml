@@ -7,8 +7,8 @@ dns1: "8.8.8.8"
 dns2: "8.8.4.4"
 
 # CloudStack paths
-secondary_storage_path: "/export/secondary"
-primary_storage_path: "/export/primary"
+secondary_storage_path: "{{ ansible_user_dir }}/export/secondary"
+primary_storage_path: "{{ ansible_user_dir }}/export/primary"
 
 # NFS Server Toggle
 enable_nfs_server: true
