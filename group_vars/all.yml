@@ -13,6 +13,8 @@ primary_storage_path: "{{ ansible_user_dir }}/export/primary"
 # NFS Server Toggle
 enable_nfs_server: true
 nfs_exports_file: "/etc/exports"
+install_vagrant: false
+github_runner_token: "ENTER_YOUR_TOKEN_HERE"
 
 # Passwords
 mysql_root_password: "password"
