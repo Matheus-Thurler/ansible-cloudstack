@@ -5,6 +5,8 @@
   roles:
     - common
     - network_bridge
+    - role: vagrant
+      when: install_vagrant | bool
 
 - name: Components for Management Server
   hosts: cloudstack_management
