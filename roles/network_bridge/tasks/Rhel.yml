@@ -28,11 +28,15 @@
 
 - name: Create cloudbr0 bridge (if not exists)
   command: nmcli connection add type bridge autoconnect yes con-name cloudbr0 ifname cloudbr0
-  when: cloudbr0_exists.rc != 0
+  when: 
+    - create_cloudbr0 | bool
+    - cloudbr0_exists.rc != 0
 
 - name: Add interface to bridge (slave)
   command: nmcli connection add type bridge-slave autoconnect yes con-name bridge-slave-{{ net_interface.stdout }} ifname {{ net_interface.stdout }} master cloudbr0
-  when: cloudbr0_exists.rc != 0
+  when: 
+    - create_cloudbr0 | bool
+    - cloudbr0_exists.rc != 0
 
 - name: Configure cloudbr0 with static IP
   command: >
@@ -41,12 +45,37 @@
     ipv4.gateway '{{ default_gateway.stdout }}'
     ipv4.dns '{{ dns1 }} {{ dns2 }}'
     ipv4.method manual
-  when: cloudbr0_exists.rc != 0
+  when: 
+    - create_cloudbr0 | bool
+    - cloudbr0_exists.rc != 0
 
 - name: Bring down old interface connection
   command: nmcli connection down {{ net_interface.stdout }}
-  when: cloudbr0_exists.rc != 0
+  when: 
+    - create_cloudbr0 | bool
+    - cloudbr0_exists.rc != 0
   ignore_errors: yes
 
 - name: Bring up cloudbr0
   command: nmcli connection up cloudbr0
+  when: create_cloudbr0 | bool
+
+# VLAN Configuration
+- name: Create VLANs
+  command: >
+    nmcli connection add type vlan con-name {{ item.name }} ifname {{ net_interface.stdout }}.{{ item.id }} dev {{ net_interface.stdout }} id {{ item.id }}
+  loop: "{{ vlans }}"
+  when: configure_vlans | bool
+  ignore_errors: yes
+
+- name: Configure VLAN IPs
+  command: >
+    nmcli connection modify {{ item.name }} ipv4.addresses {{ item.ip }} ipv4.method manual
+  loop: "{{ vlans }}"
+  when: configure_vlans | bool
+  ignore_errors: yes
+
+- name: Bring up VLANs
+  command: nmcli connection up {{ item.name }}
+  loop: "{{ vlans }}"
+  when: configure_vlans | bool

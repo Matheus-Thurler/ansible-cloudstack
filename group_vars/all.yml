@@ -1,5 +1,14 @@
 ---
 # Network Configuration
+create_cloudbr0: true
+configure_vlans: false
+vlans: []
+#  - id: 40
+#    name: vlan40-storage
+#    ip: "10.0.40.11/24"
+#  - id: 50
+#    name: vlan50-public
+#    ip: "10.0.50.11/24"
 management_server_ip: "{{ groups['cloudstack_management'][0] }}"
 utility_server_ip: "{{ groups['cloudstack_management'][0] }}"
 gateway: "10.0.0.1"
