@@ -9,8 +9,8 @@
   register: default_gateway
   changed_when: false
 
-- name: Get current network interface name
-  shell: "ip route | grep default | awk '{print $5}'"
+- name: Get physical network interface name
+  shell: "nmcli -t -f DEVICE,TYPE device | grep ethernet | cut -d: -f1 | grep -vE '^(vnet|virbr|cloudbr|docker|podman|veth)' | head -n1"
   register: net_interface
   changed_when: false
 
@@ -61,19 +61,38 @@
   when: create_cloudbr0 | bool
 
 # VLAN Configuration
-- name: Create VLANs
+- name: Create VLAN interfaces
   command: >
     nmcli connection add type vlan con-name {{ item.name }} ifname {{ net_interface.stdout }}.{{ item.id }} dev {{ net_interface.stdout }} id {{ item.id }}
   loop: "{{ vlans }}"
   when: configure_vlans | bool
   ignore_errors: yes
 
-- name: Configure VLAN IPs
+- name: Create Bridge for VLANs
   command: >
-    nmcli connection modify {{ item.name }} ipv4.addresses {{ item.ip }} ipv4.method manual
+    nmcli connection add type bridge autoconnect yes con-name bre{{ net_interface.stdout }}-{{ item.id }} ifname bre{{ net_interface.stdout }}-{{ item.id }}
   loop: "{{ vlans }}"
   when: configure_vlans | bool
   ignore_errors: yes
+
+- name: Slave VLAN to Bridge
+  command: >
+    nmcli connection modify {{ item.name }} slave-type bridge master bre{{ net_interface.stdout }}-{{ item.id }}
+  loop: "{{ vlans }}"
+  when: configure_vlans | bool
+  ignore_errors: yes
+
+- name: Configure Bridge IPs
+  command: >
+    nmcli connection modify bre{{ net_interface.stdout }}-{{ item.id }} ipv4.addresses {{ item.ip }} ipv4.method manual
+  loop: "{{ vlans }}"
+  when: configure_vlans | bool
+  ignore_errors: yes
+
+- name: Bring up Bridges
+  command: nmcli connection up bre{{ net_interface.stdout }}-{{ item.id }}
+  loop: "{{ vlans }}"
+  when: configure_vlans | bool
 
 - name: Bring up VLANs
   command: nmcli connection up {{ item.name }}

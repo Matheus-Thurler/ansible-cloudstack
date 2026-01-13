@@ -1,8 +1,8 @@
 [cloudstack_management]
-10.0.0.243 ansible_user=matheus ansible_become_password=matheus
+10.0.30.254 ansible_user=matheus ansible_become_password=matheus
 
 [cloudstack_kvm]
-10.0.0.243 ansible_user=matheus ansible_become_password=matheus
+10.0.30.254 ansible_user=matheus ansible_become_password=matheus
 
 [cloudstack:children]
 cloudstack_management
