@@ -69,7 +69,7 @@ mysql_cloud_password: "password"      # Password for 'cloud' DB user
 Execute the playbook to start the installation:
 
 ```bash
-ansible-playbook -i inventory site.yml
+ansible-playbook -i inventory cloudstack-install.yml
 ```
 
 **The playbook performs the following actions:**
@@ -135,7 +135,7 @@ This project includes advanced fixes for known issues in CloudStack 4.22 + RHEL 
 ```text
 ├── ansible.cfg          # SSH optimizations
 ├── inventory            # Server list
-├── site.yml             # Main Installation Playbook
+├── cloudstack-install.yml             # Main Installation Playbook
 ├── purge.yml            # Cleanup Playbook
 ├── ZONE_SETUP.md        # UI Configuration Guide
 ├── group_vars/
