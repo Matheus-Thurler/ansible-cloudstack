@@ -49,12 +49,6 @@
     - create_cloudbr0 | bool
     - cloudbr0_exists.rc != 0
 
-- name: Bring down old interface connection
-  command: nmcli connection down {{ net_interface.stdout }}
-  when: 
-    - create_cloudbr0 | bool
-    - cloudbr0_exists.rc != 0
-  ignore_errors: yes
 
 - name: Bring up cloudbr0
   command: nmcli connection up cloudbr0

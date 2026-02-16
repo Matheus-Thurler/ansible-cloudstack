@@ -103,10 +103,29 @@
         - "{{ secondary_storage_path }}"
 
     - name: Clean NFS Exports
-      copy:
-        content: ""
-        dest: "{{ nfs_exports_file | default('/etc/exports') }}"
+      file:
+        path: /etc/exports
+        state: absent
+      notify: Reload NFS Exports
+      when: enable_nfs_server | default(true)
+
+    # Network Cleanup
+    - name: Get CloudStack Network Connections
+      shell: "nmcli -t -f UUID,NAME connection show | grep -E '(cloudbr|bre-|vlan)' | cut -d: -f1"
+      register: network_conns
+      ignore_errors: yes
+      changed_when: false
+
+    - name: Delete CloudStack Network Connections
+      command: "nmcli connection delete {{ item }}"
+      loop: "{{ network_conns.stdout_lines }}"
+      when: network_conns.stdout_lines | length > 0
+      ignore_errors: yes
 
     # Network cleanup removed to prevent SSH lockout
     # If network reset is needed, it must be done via console
 
+  handlers:
+    - name: Reload NFS Exports
+      command: exportfs -ra
+      ignore_errors: yes

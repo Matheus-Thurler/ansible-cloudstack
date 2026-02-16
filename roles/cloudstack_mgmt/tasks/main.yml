@@ -28,13 +28,24 @@
     immediate: yes
   when: ansible_os_family == 'RedHat'
 
+- name: Check if CloudStack Database is initialized (Table cloud.vm_template exists)
+  shell: mysql -u cloud -p'{{ mysql_cloud_password }}' -e "USE cloud; SHOW TABLES LIKE 'vm_template';" || true
+  register: db_check
+  changed_when: false
+  ignore_errors: yes
+
+- name: Drop invalid CloudStack databases if re-initializing
+  shell: mysql -u root -p'{{ mysql_root_password }}' -e "DROP DATABASE IF EXISTS cloud; DROP DATABASE IF EXISTS cloud_usage;"
+  when: db_check.stdout.find('vm_template') == -1
+  no_log: true
+
 - name: Init CloudStack Databases
   command: >
     cloudstack-setup-databases cloud:{{ mysql_cloud_password }}@localhost 
     --deploy-as=root:{{ mysql_root_password }} 
     -i {{ management_server_ip }} 
-    --force-recreate
     -e file
+  when: db_check.stdout.find('vm_template') == -1
   register: db_setup
   changed_when: "'Database setup complete' in db_setup.stdout"
 
