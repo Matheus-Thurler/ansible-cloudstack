@@ -1,0 +1,17 @@
+# Baseline — zone/pod/cluster vazios até adicionar host na UI
+host={{ cloudstack_mgmt_host }}
+port={{ cloudstack_mgmt_port }}
+zone={{ cloudstack_zone_id | default('') }}
+pod={{ cloudstack_pod_id | default('') }}
+cluster={{ cloudstack_cluster_id | default('') }}
+hypervisor.type=kvm
+network.bridge.type={{ cloudstack_bridge_type }}
+private.network.device={{ cloudstack_private_bridge }}
+public.network.device={{ cloudstack_private_bridge }}
+guest.network.device={{ cloudstack_private_bridge }}
+resource=com.cloud.hypervisor.kvm.resource.LibvirtComputingResource
+{% set mid = ansible_machine_id | replace('-', '') %}
+{% set machine_uuid = mid[0:8] ~ '-' ~ mid[8:12] ~ '-' ~ mid[12:16] ~ '-' ~ mid[16:20] ~ '-' ~ mid[20:32] %}
+guid={{ machine_uuid }}
+local.storage.uuid={{ machine_uuid }}
+libvirt.vif.driver={{ cloudstack_libvirt_vif_driver | default('com.cloud.hypervisor.kvm.resource.OvsVifDriver') }}

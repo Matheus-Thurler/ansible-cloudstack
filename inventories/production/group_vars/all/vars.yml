@@ -8,8 +8,12 @@ dns2: "8.8.4.4"
 cloudstack_mgmt_host: "151.246.233.3"
 cloudstack_mgmt_port: "30250"
 
+cloudstack_release: "4.22"
+cloudstack_repo_releasever: "9"  # Rocky 10 — repo upstream ainda em el9
+
 # Prod: primary pool Gluster — instalar glusterfs-client nos 3 KVM hosts
 install_glusterfs_client: true
 cloudstack_bridge_type: openvswitch
 cloudstack_private_bridge: cloudbr0
+cloudstack_libvirt_vif_driver: com.cloud.hypervisor.kvm.resource.OvsVifDriver
 configure_network_bridge: false
